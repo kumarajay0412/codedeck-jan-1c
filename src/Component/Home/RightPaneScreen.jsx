@@ -12,10 +12,19 @@ function RighPaneScreen() {
   const { openModal } = React.useContext(ModalContext)
   const { folders, deleteFolder, deleteCard } = React.useContext(PlayGroundContext)
   return (
-    <div className='h-screen p-8'>
+    <div className='h-screen p-8 overflow-y-auto relative'>
       <div className='flex justify-between placeholder:mt-8 items-center'>
         <h1> My <span className='font-semibold text-3xl'>PlayGround</span></h1>
-        <h3><span className='font-semibold text-2xl'>+</span> New Folder</h3>
+        <h3 onClick={() =>
+                  openModal({
+                    show: true,
+                    modalType: 1,
+                    identifiers: {
+                      folderId: "",
+                      cardId: "",
+                    }
+                  })
+                }><span className='font-semibold text-2xl'  >+</span> New Folder</h3>
       </div>
       <hr className='mb-12 mt-4 bg-black' />
       {
@@ -34,13 +43,22 @@ function RighPaneScreen() {
                     show: true,
                     modalType: 4,
                     identifiers: {
-                      folderId: folderId,
+                      folderId: "folderId",
                       cardId: "",
                     }
                   })
                 } />
                 <IoTrashOutline size={'1.4em'} onClick={() => deleteFolder(folderId)} />
-                <h5 className='font-semibold'>+ <span>{" "}New playground</span></h5>
+                <h5 className='font-semibold' onClick={() =>
+                  openModal({
+                    show: true,
+                    modalType: 2,
+                    identifiers: {
+                      folderId: folderId,
+                      cardId: "",
+                    }
+                  })
+                } >+ <span>{" "}New playground</span></h5>
               </div>
             </div>
             <hr className='mb-12 mt-4 bg-black' />
@@ -48,8 +66,12 @@ function RighPaneScreen() {
               {
                 Object.entries(folder["playgrounds"]).map(([playgroundId, playground]) => (<>
 
-                  <Card>
-                    <div className='flex items-center justify-between'>
+                  <Card >
+                    <div onClick={(e)=>{
+                          e.stopPropagation(); //stop click propagation from child to parent
+                          console.log(folderId, playgroundId)
+                    navigate(`/playground/${folderId}/${playgroundId}`)
+                  }}className='flex items-center justify-between'>
                       <div className='flex gap-4 items-center'>
                         <img src="/logo-small.png" />
                         <div>
@@ -61,7 +83,16 @@ function RighPaneScreen() {
                       <div className='flex gap-4 items-center ' onClick={(e) => {
                         e.stopPropagation(); //stop click propagation from child to parent
                       }}>
-                        <BiEditAlt size={'1.4em'} />
+                        <BiEditAlt size={'1.4em'} onClick={() =>
+                          openModal({
+                            show: true,
+                            modalType: 5,
+                            identifiers: {
+                              folderId: folderId,
+                              cardId: playgroundId,
+                            }
+                          })
+                        } />
                         <IoTrashOutline size={'1.4em'} onClick={() => deleteCard(folderId, playgroundId)} />
                       </div>
                     </div>
